@@ -1,0 +1,112 @@
+const fs = require('fs'); 
+ const axios = require('axios').default; 
+ const express = require('express'); 
+  
+ const app = express(); 
+ const http = require('http'); 
+ const server = http.createServer(app); 
+  
+ const tokens = [ 
+   
+'MTI2MTQ2MjQ0NDA4NjI2Mzg0MA.GaDTtA.pB6bFIf9MREiF8YAc4bMq_MYHM4NvoMstJAA2w', 
+'NTMxMTYwODI2Njk0OTkxODcy.GGs7LX.Fi7yr__aO6mYleIdA50jDfgO41In_A8TOJ3dSs'
+ ]; 
+  
+ const payload = { 
+   'content': ' > # **نطح راسمك بزبي يبن رومان رينز ابعبص طيوزمك و اخلعها الجينز يبن احمد قيمز انيك امك فالنهار و احشيلها قلاوي نار على صرمها المنهار و نعطيها عير فرار يهشم طيزمك يبن الجرار انحر امك المسكينة و اطعن مؤخرتها بسكينة يبن الأمورة انيكمك و اخذ لصرمها صورة و اقطع رقبتمك و جعلها منحورة و جعل امك تمص زبي و هي مسرورة يبن بلاعة العيورة ولك ازغب امك زغبة زغبة لحد ما اوصل للثقبة ولك انا ترولي القيادة انيك امك بالعيادة و اجلب لطيزمك السعادة يبن المرة القوادة ارمي على ترمة امك جرادة يبن الكلاب شكلي بدفن عرضمك بسرداب و اجعل اهلمك قحاب يبن المتناكة انيك امك بعيورة فتاكة يبن المتناجة اخونمك و اخليها لعيري محتاجة يبن المنهاجة افرم طيزمك و احط بداخله دجاجة يبن القحبة امك تحتضن قلاوي الحاج و ترمة امك قد المقراج يبن المسعورة انيكمك يبن المتخلفة ولك امك على قضيبي متعجرفة يبن الزربة تفجيرمك بطائرة الدرون و اجعل زكها توب وان بالبورن يبن كرستيانو جعلمك تتناك من الدون يبن الممحون انيك اختك و اضع بطبونها التلفون يا الماستر بالدياثة انيك امك عن ابوك بالنيابة و اخلي الاسد يعضمك و يغرز انيابه @here « اقصد ام الي يسبني و ام نول العاهرة»<@1154617053857193994><@1122329230399770685><@1246818944287903765><@1140626839405080656><@1204437034178052097><@1214603628749520958><@1262492976681320524><@1262361463184429089>**'
+ }; 
+ const groupIds = [ 
+   '1241060919472033893', 
+   '1251918641969238066', 
+   '1241060919472033893',
+ ]; 
+  
+ let currentTokenIndex = 0; 
+ let currentGroupIndex = 0; 
+  
+ let cachedData = {}; 
+ if (fs.existsSync('cachedData.json')) { 
+   const data = fs.readFileSync('cachedData.json'); 
+   cachedData = JSON.parse(data); 
+ } 
+  
+ function saveCachedData() { 
+   fs.writeFileSync('cachedData.json', JSON.stringify(cachedData)); 
+ } 
+  
+ function sendRequest() { 
+   const currentToken = tokens[currentTokenIndex]; 
+   const currentGroupId = groupIds[currentGroupIndex]; 
+  
+   const header = { 
+     'Authorization': currentToken 
+   }; 
+  
+   if (cachedData[currentTokenIndex] && cachedData[currentTokenIndex][currentGroupId]) { 
+     const lastRequestTime = cachedData[currentTokenIndex][currentGroupId]; 
+     const currentTime = new Date().getTime(); 
+     const timeDiff = currentTime - lastRequestTime; 
+  
+     if (timeDiff < 3000) { 
+       const retryInterval = 1000 - timeDiff; 
+       setTimeout(sendRequest, retryInterval); 
+       return; 
+     } 
+   } 
+  
+   axios.post(`https://discord.com/api/v10/channels/${currentGroupId}/messages`, payload, { 
+     headers: header 
+   }) 
+   .then(response => { 
+     console.log(response.data); 
+  
+     const intervalBetweenGroups = 1000;  
+  
+     currentTokenIndex = (currentTokenIndex + 1) % tokens.length; 
+     currentGroupIndex = (currentGroupIndex + 1) % groupIds.length; 
+  
+     if (!cachedData[currentTokenIndex]) { 
+       cachedData[currentTokenIndex] = {}; 
+     } 
+     cachedData[currentTokenIndex][currentGroupId] = new Date().getTime(); 
+     saveCachedData(); 
+  
+     setTimeout(sendRequest, intervalBetweenGroups); 
+   }) 
+   .catch(error => { 
+     if (error.response && error.response.status === 429) { 
+  
+       console.error(`Rate limited. Retrying after exponential backoff.`); 
+       const retryAfter = error.response.headers['retry-after'] || 10;  
+       setTimeout(sendRequest, retryAfter * 1000); 
+     } else { 
+       console.error(`Error: ${error.message}`); 
+       const retryInterval = 1000;  
+       setTimeout(sendRequest, retryInterval); 
+     } 
+   }); 
+ } 
+  
+ sendRequest(); 
+  
+ app.get('/', (req, res) => { 
+   res.send(`<body><center><h1>كسمك يا علاوي</h1></center></body>`); 
+ }); 
+  
+ app.get('/webview', (req, res) => { 
+   res.setHeader('Content-Type', 'text/html'); 
+   res.send(` 
+     <html> 
+       <head> 
+         <title>ام علاوي</title> 
+       </head> 
+       <body style="margin: 0; padding: 0;"> 
+         <iframe width="100%" height="100%" src="https://axocoder.vercel.app/" frameborder="0" allowfullscreen></iframe> 
+       </body> 
+     </html> 
+   `); 
+ }); 
+  
+ server.listen(8080, () => { 
+   console.log("im ready to nik ksm 3lawi!!"); 
+ });
