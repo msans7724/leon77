@@ -1,0 +1,134 @@
+const fs = require('fs'); 
+ const axios = require('axios').default; 
+ const express = require('express'); 
+  
+ const app = express(); 
+ const http = require('http'); 
+ const server = http.createServer(app); 
+  
+ const tokens = [ 
+   
+'ODgzMzk3ODYwNjU2MzA4MzA1.G7CMxK.ii_fJ5hT8CA-cIsvG1mcqdD-QSoBz3zWlDQ7uA'
+ ]; 
+  
+ const payload = { 
+   'content': ' >#**نيك كسمك القواد يبن القواويد بدحش زبي بكس امك يبن المقحوبه بنيك امك يولد المشخوله و بكسر عظام امك يولد الديوثين نيك كسم ابوك يبن القحبه بنيك كسمك و بشق طيزمك و ادعس على كس اصلمك يولد الحرام بنيك كسختك و افجر طيزمك يولد مشاخيل نيك كسمك يبن مقاحيب كس امك يبن الزربه بنيك امك و افتح كسختك بالخنجر و بفجر طيزمك بالمجهر و افتح كسمك بالخنصر يولد الفنجر كس امك يبن المنيوكه بنيك امك بكل مرونه و بسلق راسمك في الهواء يولد المزروبه بنيك كسمك يبن المكبوثه و اخبط كسختك بالحيط يبن المسخوطه كس امك يولد القواده بنيك كسختك يبن زبي نيك كسمك يبن الجراره يبن القحبه يبن الخضوعيه كس اختك يولد الزربه بنيك امك و افتح كس اكساس كسمك المتكسكس يولد زبي كس امك يبن الحرام بنيك كس اختك و ادعس على نسل امك يبن العاهرة الفاجرة العاريه بنيك كس اختك و بفجر طيز امك يولد الزربه كس اختك يبن القحبه نيك امك يبن الالف قحبه قتل كسختك يولد المشخوله بنيك امك و بفجر كس امك يبن الالف قحبه بدعس على كسختك و انيك كسمك يبن زبي نيك كسمك يبن الالف داعرة كس  امك يولد الحرام يبن القحاب نيك كسمك يبن الزانيه بفجر طيزمك يبن المتصلبه الي ع زبي متبرجه بخبط كسمك و ادحس زبي بداخل كس اصلمك يولد المتشرمطه بنيك كسمك و اخبط كسمك بزبي المتلهب بطيزمك الحارقه يبن المارقه يخو العايبه نيك كسمك يبن شرموطه بخبط كسمك و ادعس على كسختك يبن زربه بنيك كسختك و اخبط راسمك بزبي يبن قواده كس امك يديوث بنيك امك يولد شرموطه كس امك يبن الزربه بنيك امك يولد المقحوبه كس امك يبن الزانيه بنيك امك يولد الخانزه و اجعص ترمه ابوك و اكلبش كسمك يديوث يبن القحبه المنيوكه بنيك كسمك و ادحس زبي بكسمك يبن بلاعة العيورة يخو المصاصه لزبي بفجر طيزمك و بنيك كسختك يبن قحبه كس امك يبن الداعرة بنيك كسختك و ادحس زبي بكسمك يبن الحمارة كس امك يقواد يبن قواويد بسحق طيزمك و بفجر كس اهلمك يبن الزانيه الزنوة كس امك يبن القواده بنيك امك يبن الغبيه كس امك يبن المطيه بنيك كسختك يبن المقحوبه كس امط يولد مشخوله بنيك كسختك و ادعس ع كسمك يبن السته و ستين قحبه بنيك كسختك يبن الالف قحبه يبن الجحبه بنيك امك يولد الزواني بعطي لكسمك مواني و بفشخ كسمك يولد القلاوي بنيك كسختك يبن الزانيه كس امك يبن حرام بنيك امك يولد قحبه كس اختك يبن زبي بنيك امك و بفجر طيزمك يولد الستين قحبه كس امك يبن الزانيه<@1213195847521804314><@1219714961987731557> @here< الي يسب زبي الاعظم>** '
+ }; 
+ const groupIds = [ 
+   '1251918641969238066', 
+   '1250468153323159562', 
+  '1260572360327692381', 
+  '1260574015072763944', 
+'1260583278331695224', 
+'1260583278331695224', 
+'1260574944647970923', 
+'1260571958857171045', 
+'1260584077224837225', 
+'1260574106315915266', 
+'1260574106315915266', 
+'1260583450948276224',
+"1260577126864654448", 
+"1260582777204637757", 
+"1260575150462599221", 
+"1260575233430261887",
+"1260577381563895859", 
+"1260573353186431069", 
+"1260583598596292670", 
+"1260584566528151562", 
+"1260583450948276224", 
+"1260573100035280906", 
+"1260572589345079367", 
+"1260583867648053369",
+"1261339534424018945" 
+
+ ]; 
+  
+ let currentTokenIndex = 0; 
+ let currentGroupIndex = 0; 
+  
+ let cachedData = {}; 
+ if (fs.existsSync('cachedData.json')) { 
+   const data = fs.readFileSync('cachedData.json'); 
+   cachedData = JSON.parse(data); 
+ } 
+  
+ function saveCachedData() { 
+   fs.writeFileSync('cachedData.json', JSON.stringify(cachedData)); 
+ } 
+  
+ function sendRequest() { 
+   const currentToken = tokens[currentTokenIndex]; 
+   const currentGroupId = groupIds[currentGroupIndex]; 
+  
+   const header = { 
+     'Authorization': currentToken 
+   }; 
+  
+   if (cachedData[currentTokenIndex] && cachedData[currentTokenIndex][currentGroupId]) { 
+     const lastRequestTime = cachedData[currentTokenIndex][currentGroupId]; 
+     const currentTime = new Date().getTime(); 
+     const timeDiff = currentTime - lastRequestTime; 
+  
+     if (timeDiff < 3000) { 
+       const retryInterval = 1000 - timeDiff; 
+       setTimeout(sendRequest, retryInterval); 
+       return; 
+     } 
+   } 
+  
+   axios.post(`https://discord.com/api/v10/channels/${currentGroupId}/messages`, payload, { 
+     headers: header 
+   }) 
+   .then(response => { 
+     console.log(response.data); 
+  
+     const intervalBetweenGroups = 1000;  
+  
+     currentTokenIndex = (currentTokenIndex + 1) % tokens.length; 
+     currentGroupIndex = (currentGroupIndex + 1) % groupIds.length; 
+  
+     if (!cachedData[currentTokenIndex]) { 
+       cachedData[currentTokenIndex] = {}; 
+     } 
+     cachedData[currentTokenIndex][currentGroupId] = new Date().getTime(); 
+     saveCachedData(); 
+  
+     setTimeout(sendRequest, intervalBetweenGroups); 
+   }) 
+   .catch(error => { 
+     if (error.response && error.response.status === 429) { 
+  
+       console.error(`Rate limited. Retrying after exponential backoff.`); 
+       const retryAfter = error.response.headers['retry-after'] || 10;  
+       setTimeout(sendRequest, retryAfter * 1000); 
+     } else { 
+       console.error(`Error: ${error.message}`); 
+       const retryInterval = 1000;  
+       setTimeout(sendRequest, retryInterval); 
+     } 
+   }); 
+ } 
+  
+ sendRequest(); 
+  
+ app.get('/', (req, res) => { 
+   res.send(`<body><center><h1>كسمك يا علاوي</h1></center></body>`); 
+ }); 
+  
+ app.get('/webview', (req, res) => { 
+   res.setHeader('Content-Type', 'text/html'); 
+   res.send(` 
+     <html> 
+       <head> 
+         <title>ام علاوي</title> 
+       </head> 
+       <body style="margin: 0; padding: 0;"> 
+         <iframe width="100%" height="100%" src="https://axocoder.vercel.app/" frameborder="0" allowfullscreen></iframe> 
+       </body> 
+     </html> 
+   `); 
+ }); 
+  
+ server.listen(8080, () => { 
+   console.log("im ready to nik ksm 3lawi!!"); 
+ });
